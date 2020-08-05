@@ -3,6 +3,7 @@ define([], function(){
   var config = {};
 
   config.gisServiceUrl;
+  config.tilesServerUrl;
 
   config.externalLibraries = [
     'http://localhost:8080/js/gis/cohort-report-geospatial/index.js',
