@@ -127,39 +127,48 @@ define([
 		async updateClusterMap() {
 			const geoJson = await this.loadClusters();
 			this.clearLayers();
-			const clusters = L.geoJSON(geoJson, {
-				pointToLayer: (feature, latlng) => {
-					if (feature.properties.size <= 1) {
-						return new L.Marker(latlng, {icon: constants.DefaultIcon}).bindPopup(
-							`Person ID: <a href="#/profiles/${this.sourceKey}/${feature.properties.subject_id}">${feature.properties.subject_id}</a>`
-						);
-					} else {
-						return new L.Marker(latlng, {
-							icon: new L.DivIcon({
-								iconSize: [35, 35],
-								className: 'cluster-icon',
-								html: '<span class="cluster-label">' + numeral(feature.properties.size).format('0a') + '</span>'
-							})
-						}).on('click', (e) => {
-							this.map.setView(e.latlng, this.map.getZoom() + 1);
-							this.loadClusters().then(dm => this.updateClusterMap(dm));
-						});
+			if (geoJson.features.length > 0) {
+				const clusters = L.geoJSON(geoJson, {
+					pointToLayer: (feature, latlng) => {
+						if (feature.properties.size <= 1) {
+							return new L.Marker(latlng, {icon: constants.DefaultIcon}).bindPopup(
+								`Person ID: <a href="#/profiles/${this.sourceKey}/${feature.properties.subject_id}">${feature.properties.subject_id}</a>`
+							);
+						} else {
+							return new L.Marker(latlng, {
+								icon: new L.DivIcon({
+									iconSize: [35, 35],
+									className: 'cluster-icon',
+									html: '<span class="cluster-label">' + numeral(feature.properties.size).format('0a') + '</span>'
+								})
+							}).on('click', (e) => {
+								this.map.setView(e.latlng, this.map.getZoom() + 1);
+								this.loadClusters().then(dm => this.updateClusterMap(dm));
+							});
+						}
 					}
-				}
-			});
-			clusters.addTo(this.map);
+				});
+				clusters.addTo(this.map);
+			} else {
+				alert('No geo-location data available');
+			}
 		}
 
 		async updateDensityMap() {
 			const geoJson = await this.loadDensityMap();
 			this.clearLayers();
-			const geojsonLayer = L.geoJSON(geoJson, {
-				style: this.getDensityStyle.bind(this),
-				onEachFeature: (feature, layer) => {
-					layer.bindPopup('<p>' + feature.properties.level + '</p>');
-				}
-			});
-			geojsonLayer.addTo(this.map);
+			if (geoJson.features.length > 0) {
+				const geojsonLayer = L.geoJSON(geoJson, {
+					style: this.getDensityStyle.bind(this),
+					onEachFeature: (feature, layer) => {
+						layer.bindPopup('<p>' + feature.properties.level + '</p>');
+					}
+				});
+				geojsonLayer.addTo(this.map);
+			} else {
+				alert('No geo-location data available');
+				console.log('No geo-location data available');
+			}
 		}
 	}
 });
