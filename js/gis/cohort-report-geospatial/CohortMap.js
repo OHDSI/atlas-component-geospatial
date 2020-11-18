@@ -167,7 +167,6 @@ define([
 				geojsonLayer.addTo(this.map);
 			} else {
 				alert('No geo-location data available');
-				console.log('No geo-location data available');
 			}
 		}
 	}
