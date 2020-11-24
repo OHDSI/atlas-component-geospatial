@@ -154,10 +154,7 @@ define([
 			const geoJson = await this.loadDensityMap();
 			this.clearLayers();
 			const geojsonLayer = L.geoJSON(geoJson, {
-				style: this.getDensityStyle.bind(this),
-				onEachFeature: (feature, layer) => {
-					layer.bindPopup('<p>' + feature.properties.level + '</p>');
-				}
+				style: this.getDensityStyle.bind(this)
 			});
 			geojsonLayer.addTo(this.map);
 		}
