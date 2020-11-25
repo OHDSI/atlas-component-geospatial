@@ -127,6 +127,10 @@ define([
 		async updateClusterMap() {
 			const geoJson = await this.loadClusters();
 			this.clearLayers();
+			if (geoJson.features.length === 0) {
+				alert('No geo-location data available');
+				return;
+			}
 			const clusters = L.geoJSON(geoJson, {
 				pointToLayer: (feature, latlng) => {
 					if (feature.properties.size <= 1) {
@@ -153,6 +157,10 @@ define([
 		async updateDensityMap() {
 			const geoJson = await this.loadDensityMap();
 			this.clearLayers();
+			if (geoJson.features.length === 0) {
+				alert('No geo-location data available');
+				return;
+			}
 			const geojsonLayer = L.geoJSON(geoJson, {
 				style: this.getDensityStyle.bind(this)
 			});
