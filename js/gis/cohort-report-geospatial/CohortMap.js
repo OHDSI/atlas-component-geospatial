@@ -127,47 +127,44 @@ define([
 		async updateClusterMap() {
 			const geoJson = await this.loadClusters();
 			this.clearLayers();
-			if (geoJson.features.length > 0) {
-				const clusters = L.geoJSON(geoJson, {
-					pointToLayer: (feature, latlng) => {
-						if (feature.properties.size <= 1) {
-							return new L.Marker(latlng, {icon: constants.DefaultIcon}).bindPopup(
-								`Person ID: <a href="#/profiles/${this.sourceKey}/${feature.properties.subject_id}">${feature.properties.subject_id}</a>`
-							);
-						} else {
-							return new L.Marker(latlng, {
-								icon: new L.DivIcon({
-									iconSize: [35, 35],
-									className: 'cluster-icon',
-									html: '<span class="cluster-label">' + numeral(feature.properties.size).format('0a') + '</span>'
-								})
-							}).on('click', (e) => {
-								this.map.setView(e.latlng, this.map.getZoom() + 1);
-								this.loadClusters().then(dm => this.updateClusterMap(dm));
-							});
-						}
-					}
-				});
-				clusters.addTo(this.map);
-			} else {
+			if (geoJson.features.length === 0) {
 				alert('No geo-location data available');
+				return;
 			}
+			const clusters = L.geoJSON(geoJson, {
+				pointToLayer: (feature, latlng) => {
+					if (feature.properties.size <= 1) {
+						return new L.Marker(latlng, {icon: constants.DefaultIcon}).bindPopup(
+							`Person ID: <a href="#/profiles/${this.sourceKey}/${feature.properties.subject_id}">${feature.properties.subject_id}</a>`
+						);
+					} else {
+						return new L.Marker(latlng, {
+							icon: new L.DivIcon({
+								iconSize: [35, 35],
+								className: 'cluster-icon',
+								html: '<span class="cluster-label">' + numeral(feature.properties.size).format('0a') + '</span>'
+							})
+						}).on('click', (e) => {
+							this.map.setView(e.latlng, this.map.getZoom() + 1);
+							this.loadClusters().then(dm => this.updateClusterMap(dm));
+						});
+					}
+				}
+			});
+			clusters.addTo(this.map);
 		}
 
 		async updateDensityMap() {
 			const geoJson = await this.loadDensityMap();
 			this.clearLayers();
-			if (geoJson.features.length > 0) {
-				const geojsonLayer = L.geoJSON(geoJson, {
-					style: this.getDensityStyle.bind(this),
-					onEachFeature: (feature, layer) => {
-						layer.bindPopup('<p>' + feature.properties.level + '</p>');
-					}
-				});
-				geojsonLayer.addTo(this.map);
-			} else {
+			if (geoJson.features.length === 0) {
 				alert('No geo-location data available');
+				return;
 			}
+			const geojsonLayer = L.geoJSON(geoJson, {
+				style: this.getDensityStyle.bind(this)
+			});
+			geojsonLayer.addTo(this.map);
 		}
 	}
 });
