@@ -18,6 +18,8 @@ define([
 	if (!customElements.get(NAME)) {
 
 		const COHORT_ID_ATTR = 'data-cohortid';
+		const NO_GEODATA_IN_SOURCE_ID = '#noGeodataInSource';
+		const COHORT_REPORT_CONTAINER_ID = '#cohortReport';
 		const MAP_CONTAINER_ID = '#map';
 		const LOAD_DENSITY_BTN_ID = '#loadDensity';
 		const LOAD_CLUSTERS_BTN_ID = '#loadClusters';
@@ -65,12 +67,18 @@ define([
 				this.getEl(LOAD_CLUSTERS_BTN_ID).toggleAttribute('disabled', state);
 			}
 
+			setNoGeodataInSource(state) {
+				this.getEl(NO_GEODATA_IN_SOURCE_ID).style.display = state ? 'block' : 'none';
+				this.getEl(COHORT_REPORT_CONTAINER_ID).style.display = state ? 'none' : 'flex';
+			}
+
 			initMap() {
 				this.cohortMap = new CohortMap({
 					gisServiceUrl: config.gisServiceUrl,
 					tilesServerUrl: config.tilesServerUrl,
 					mapContainerEl: this.getEl(MAP_CONTAINER_ID),
-					setLoading: this.setLoading.bind(this)
+					setLoading: this.setLoading.bind(this),
+					setNoGeodataInSource: this.setNoGeodataInSource.bind(this)
 				});
 
 				this.root.querySelector(LOAD_DENSITY_BTN_ID).addEventListener('click', async () => {

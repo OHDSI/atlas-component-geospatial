@@ -46,3 +46,12 @@ button {
     justify-content: center;
     font-weight: 600;
 }
+
+.no-geodata-in-source {
+    width: 100%;
+    margin-top: 126px;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: gray;
+}
