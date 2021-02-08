@@ -5,6 +5,9 @@ define([
 ) => {
 
   const Api = {
+    checkGeodataInSource: (sourceKey) => {
+      return config.gisServiceUrl + `/source/check/${sourceKey}`;
+    },
     loadLocationHistory: ({ personId, sourceKey, startDate, endDate }) => {
       const params = [{ name: 'startDate', value: startDate}, { name: 'endDate', value: endDate}]
         .filter(v => v.value)

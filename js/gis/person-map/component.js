@@ -10,7 +10,7 @@ define([
 	config,
 	constants,
 	BaseMapWidget,
-	{ httpQuery },
+	{ httpCheckStatus, httpQuery },
 	componentConst,
 	componentTemplate,
 	componentStyles,
@@ -98,6 +98,14 @@ define([
 				this.setLoading(true);
 
 				this.clearLayers();
+
+				if (!await httpCheckStatus(componentConst.Api.checkGeodataInSource(this.sourceKey))) {
+					this.setLoading(false);
+					this.toggleReadyState(false);
+					return;
+				} else {
+					this.toggleReadyState(true);
+				}
 
 				const locationHistory = await httpQuery(componentConst.Api.loadLocationHistory({
 					personId: this.personId,
