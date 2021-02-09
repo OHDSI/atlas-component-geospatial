@@ -2,7 +2,7 @@ define([
 	'../const.js',
 	'../Utils.js',
 	'numeral',
-], (constants, { httpQuery, addQueryParams }, numeral) => {
+], (constants, { httpCheckStatus, httpQuery, addQueryParams }, numeral) => {
 	return class CohortMap {
 
 		constructor({
@@ -10,16 +10,22 @@ define([
 			tilesServerUrl,
 			mapContainerEl,
 			setLoading,
+			setNoGeodataInSource
 		}) {
 			this.gisServiceUrl = gisServiceUrl;
 			this.tilesServerUrl = tilesServerUrl;
 			this.mapContainerEl = mapContainerEl;
 			this.setLoading = setLoading;
+			this.setNoGeodataInSource = setNoGeodataInSource;
 		}
 
 		setParams(cohortId, sourceKey) {
 			this.cohortId = cohortId;
 			this.sourceKey = sourceKey;
+		}
+
+		checkIfSourceHasGeodata() {
+			return httpCheckStatus(this.gisServiceUrl + `/source/check/${this.sourceKey}`);
 		}
 
 		loadCohortBounds() {
@@ -28,6 +34,13 @@ define([
 
 		async refresh() {
 			this.setLoading(true);
+			this.setNoGeodataInSource(false);
+			if (!await this.checkIfSourceHasGeodata()) {
+				this.setLoading(false);
+				this.setNoGeodataInSource(true);
+				return;
+			}
+
 			const bounds = await this.loadCohortBounds();
 			if (!this.mapInitiated) {
 				this.initiateMap(this.mapContainerEl);

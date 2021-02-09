@@ -7,19 +7,31 @@ define([], () => {
 	}
 
 	async function httpQuery(url) {
-		const headers = new Headers({
-			'Authorization': `Bearer ${getAuthToken()}`,
-		});
-
-		const request = new Request(url, {
-			method: 'GET',
-			headers,
-		});
+		const request = prepareRequest(url);
 
 		const response = await fetch(request);
 		const result = await response.json();
 
 		return result;
+	}
+
+	async function httpCheckStatus(url) {
+		const request = prepareRequest(url);
+
+		const response = await fetch(request);
+
+		return response.status === 200;
+	}
+
+	function prepareRequest(url) {
+		const headers = new Headers({
+			'Authorization': `Bearer ${getAuthToken()}`,
+		});
+
+		return new Request(url, {
+			method: 'GET',
+			headers,
+		});
 	}
 
 	function addQueryParams(url, params) {
@@ -30,6 +42,7 @@ define([], () => {
 	}
 
 	return {
+		httpCheckStatus,
 		httpQuery,
 		addQueryParams,
 	}
