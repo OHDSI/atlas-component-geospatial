@@ -26,6 +26,7 @@ define([], () => {
 	function prepareRequest(url) {
 		const headers = new Headers({
 			'Authorization': `Bearer ${getAuthToken()}`,
+			'Action-Location': location
 		});
 
 		return new Request(url, {
